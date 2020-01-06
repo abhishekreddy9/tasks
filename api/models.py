@@ -47,3 +47,13 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+
+class TaskGroup(models.Model):
+    title = models.CharField(max_length=32)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Task(models.Model):
+    content = models.TextField(max_length=320, blank="true")
+    tasks = models.ForeignKey(TaskGroup, on_delete=models.CASCADE)
