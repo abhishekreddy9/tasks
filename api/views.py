@@ -8,9 +8,12 @@ from .serializers import TaskGroupSerializer, TaskSerializer, UserSerializer
 from api import permissions
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.CreateModelMixin, generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class TaskGroupViewSetGetDeleteUpdate(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
