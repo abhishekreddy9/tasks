@@ -1,7 +1,7 @@
 from django.shortcuts import render
+from .models import User, TaskGroup, Task
 from rest_framework import viewsets, generics, mixins, status
 from rest_framework.response import Response
-from .models import TaskGroup, Task, User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .serializers import TaskGroupSerializer, TaskSerializer, UserSerializer
@@ -68,4 +68,35 @@ class TaskViewSet(mixins.ListModelMixin, generics.GenericAPIView):
         else:
             return None
 
-    # def post(self, request, *args,)
+
+class AddTask(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Task.objects.all()
+    # queryset = query.filter
+    serializer_class = TaskSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request, *args, **kwargs):
+        taskgroupid = request.data['tasks']
+        query = TaskGroup.objects.filter(id=taskgroupid)
+        if(query.filter(user=request.user)):
+            return self.create(request, *args, **kwargs)
+        else:
+            return Response(data={'message': 'not Allowed'}, status=None, template_name=None, headers=None, content_type=None)
+
+
+class TaskViewGetEditDelete(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = [IsAuthenticated,
+                          permissions.UpdateOwnProfile]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

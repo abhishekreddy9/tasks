@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from .models import TaskGroup, User, Task
 
 
 class UpdateOwnProfile(permissions.BasePermission):
@@ -14,3 +15,14 @@ class UpdateOwnProfile(permissions.BasePermission):
 
         # # Instance must have an attribute named `owner`.
         # return obj.owner == request.user
+
+
+# class VerifyChild(permissions.BasePermission):
+#     def has_object_permission(self, request, view, obj):
+#         temp = obj.tasks
+#         if TaskGroup.objects.all.filter(id=temp).filter(user=request.user):
+#             print('hiiiiii')
+#             return True
+
+#         else:
+#             return False
