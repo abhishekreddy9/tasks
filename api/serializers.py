@@ -19,6 +19,7 @@ class TaskGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskGroup
         fields = ('title', 'user')
+        extra_kwargs = {'user': {'read_only': True}}
 
 
 class TaskSerializer(serializers.ModelSerializer):
