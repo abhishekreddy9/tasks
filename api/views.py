@@ -8,6 +8,7 @@ from .serializers import TaskGroupSerializer, TaskSerializer, UserSerializer
 from api import permissions
 
 
+"""----------------------------USER VIEWS--------------------------------"""
 class UserViewSet(mixins.CreateModelMixin, generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -16,6 +17,13 @@ class UserViewSet(mixins.CreateModelMixin, generics.RetrieveAPIView):
         return self.create(request, *args, **kwargs)
 
 
+
+
+"""----------------------------TASKGROUP VIEWS--------------------------------"""
+
+
+
+"""TASKGROUP-GET-UPDATE-DELETE"""
 class TaskGroupViewSetGetDeleteUpdate(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = TaskGroup.objects.all()
     serializer_class = TaskGroupSerializer
@@ -23,18 +31,16 @@ class TaskGroupViewSetGetDeleteUpdate(mixins.RetrieveModelMixin, mixins.DestroyM
     permission_classes = [IsAuthenticated, permissions.UpdateOwnProfile]
 
     def get(self, request, *args, **kwargs):
-        print(request.user)
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        print(request.user)
         return self.update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        print(request.user)
         return self.destroy(request, *args, **kwargs)
 
 
+"""TASKGROUP CREATE"""
 class TaskGroupViewSetPost(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = TaskGroup.objects.all()
     serializer_class = TaskGroupSerializer
@@ -54,6 +60,11 @@ class TaskGroupViewSetPost(mixins.ListModelMixin, mixins.CreateModelMixin, gener
         serializer.save(user=self.request.user)
 
 
+
+"""----------------------------TASK VIEWS--------------------------------"""
+
+
+"""TASK-GET ALL TASKS BY TASKGROUP"""
 class TaskViewSet(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Task.objects.all()
     # queryset = query.filter
@@ -67,11 +78,11 @@ class TaskViewSet(mixins.ListModelMixin, generics.GenericAPIView):
     def get_queryset(self):
         key = self.request.query_params['id']
         if(TaskGroup.objects.all().filter(id=key).filter(user=self.request.user)):
-            return self.queryset.filter(tasks=key)
+            return self.queryset.filter(taskgroupid=key)
         else:
             return None
 
-
+"""CREATE TASK"""
 class AddTask(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Task.objects.all()
     # queryset = query.filter
@@ -80,7 +91,7 @@ class AddTask(mixins.CreateModelMixin, generics.GenericAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request, *args, **kwargs):
-        taskgroupid = request.data['tasks']
+        taskgroupid = request.data['taskgroupid']
         query = TaskGroup.objects.filter(id=taskgroupid)
         if(query.filter(user=request.user)):
             return self.create(request, *args, **kwargs)
@@ -88,18 +99,19 @@ class AddTask(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(data={'message': 'not Allowed'}, status=None, template_name=None, headers=None, content_type=None)
 
 
+"""GET,EDIT,DELETE A PARTICULAR TASK"""
 class TaskViewGetEditDelete(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     authentication_classes = (TokenAuthentication,)
-    permission_classes = [IsAuthenticated,
-                          permissions.UpdateOwnProfile]
+    permission_classes = [IsAuthenticated,]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
-
+     
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+       

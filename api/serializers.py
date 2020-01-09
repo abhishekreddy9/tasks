@@ -18,11 +18,13 @@ class UserSerializer(serializers.ModelSerializer):
 class TaskGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskGroup
-        fields = ('title', 'user')
+        fields = ('id','title', 'user')
         extra_kwargs = {'user': {'read_only': True}}
 
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ('content', 'tasks')
+        fields = ('id','content','taskgroupid')
+        extra_kwargs = {'taskgroupid': {'write_only': True}}
+

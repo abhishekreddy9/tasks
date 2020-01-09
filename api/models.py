@@ -56,4 +56,4 @@ class TaskGroup(models.Model):
 
 class Task(models.Model):
     content = models.TextField(max_length=320, blank="true")
-    tasks = models.ForeignKey(TaskGroup, on_delete=models.CASCADE)
+    taskgroupid = models.ForeignKey(TaskGroup, on_delete=models.CASCADE)

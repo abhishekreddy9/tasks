@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
 from django.conf.urls import include
-from .views import TaskGroupViewSetGetDeleteUpdate, TaskViewSet, UserViewSet, TaskGroupViewSetPost, AddTask, TaskGroupViewSetGetDeleteUpdate
+from .views import TaskGroupViewSetGetDeleteUpdate, TaskViewSet, UserViewSet, TaskGroupViewSetPost, AddTask, TaskGroupViewSetGetDeleteUpdate,TaskViewGetEditDelete
 
 
 urlpatterns = [
@@ -11,7 +11,7 @@ urlpatterns = [
     path('taskgroup', TaskGroupViewSetPost.as_view(), name='task-group-post'),
     path('tasks', TaskViewSet.as_view(), name='task'),
     path('createtask', AddTask.as_view(), name='tasks'),
-    path('task/<pk>', TaskGroupViewSetGetDeleteUpdate.as_view(), name='eachtask'),
+    path('task/<pk>', TaskViewGetEditDelete.as_view(), name='eachtask'),
     path('user', UserViewSet.as_view(), name='usercreate')
 ]
 
